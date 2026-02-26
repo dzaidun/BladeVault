@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="BladeVault.Application.Tests/BladeVault.Application.Tests.csproj" />
+  <Project Path="BladeVault.Application/BladeVault.Application.csproj" />
+  <Project Path="BladeVault.Domain/BladeVault.Domain.csproj" />
+  <Project Path="BladeVault.Infrastructure/BladeVault.Infrastructure.csproj" />
+  <Project Path="BladeVault.WebAPI/BladeVault.WebAPI.csproj" />
+</Solution>
