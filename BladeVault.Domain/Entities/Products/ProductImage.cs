@@ -1,10 +1,9 @@
 ﻿using BladeVault.Domain.Common;
-using BladeVault.Domain.Entities.Products;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BladeVault.Domain.Entities
+namespace BladeVault.Domain.Entities.Products
 {
     public class ProductImage : BaseEntity
     {
