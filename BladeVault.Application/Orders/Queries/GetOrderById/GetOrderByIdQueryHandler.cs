@@ -27,7 +27,8 @@ namespace BladeVault.Application.Orders.Queries.GetOrderById
                 OrderNumber = order.OrderNumber,
                 Status = order.Status,
                 DeliveryMethod = order.DeliveryMethod,
-                DeliveryAddress = order.DeliveryAddress,  // ← один рядок замість NovaPostWarehouse
+                DeliveryAddress = order.DeliveryAddress,
+                TrackingNumber = order.TrackingNumber,
                 Comment = order.Comment,
                 TotalAmount = order.TotalAmount,
                 CreatedAt = order.CreatedAt,

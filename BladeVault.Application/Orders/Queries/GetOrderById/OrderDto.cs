@@ -12,6 +12,7 @@ namespace BladeVault.Application.Orders.Queries.GetOrderById
         public OrderStatus Status { get; init; }
         public DeliveryMethod DeliveryMethod { get; init; }
         public string DeliveryAddress { get; init; } = string.Empty; // ← замість NovaPostWarehouse
+        public string? TrackingNumber { get; init; }
         public string? Comment { get; init; }
         public decimal TotalAmount { get; init; }
         public DateTime CreatedAt { get; init; }

@@ -20,23 +20,25 @@ namespace BladeVault.Application.Orders.Commands.ChangeOrderStatus
             ChangeOrderStatusCommand command,
             CancellationToken cancellationToken)
         {
-            // 1. Знаходимо замовлення з позиціями
             var order = await _uow.Orders.GetWithItemsAsync(command.OrderId, cancellationToken)
                 ?? throw new NotFoundException(nameof(Order), command.OrderId);
 
-            // 2. Змінюємо статус через доменний метод
-            // Вся логіка переходів — всередині Order.ChangeStatus()
             var result = order.ChangeStatus(command.NewStatus);
 
             if (!result.IsSuccess)
                 throw new ApplicationValidationException(new Dictionary<string, string[]>
-            {
-                { "status", [result.Error!] }
-            });
+                {
+                    { "status", [result.Error!] }
+                });
 
-            // 3. Якщо замовлення відправлено — спис��емо товар зі складу
             if (command.NewStatus == OrderStatus.Shipped)
             {
+                var trackingNumber = string.IsNullOrWhiteSpace(command.TrackingNumber)
+                    ? GenerateTemporaryTrackingNumber(order.OrderNumber)
+                    : command.TrackingNumber.Trim();
+
+                order.SetTrackingNumber(trackingNumber);
+
                 await _uow.BeginTransactionAsync(cancellationToken);
                 try
                 {
@@ -72,7 +74,6 @@ namespace BladeVault.Application.Orders.Commands.ChangeOrderStatus
                 return;
             }
 
-            // 4. Якщо замовлення скасоване — звільняємо резерв
             if (command.NewStatus == OrderStatus.Cancelled)
             {
                 await _uow.BeginTransactionAsync(cancellationToken);
@@ -110,9 +111,14 @@ namespace BladeVault.Application.Orders.Commands.ChangeOrderStatus
                 return;
             }
 
-            // 5. Всі інші переходи — просто зберігаємо новий статус
             _uow.Orders.Update(order);
             await _uow.SaveChangesAsync(cancellationToken);
+        }
+
+        private static string GenerateTemporaryTrackingNumber(string orderNumber)
+        {
+            var suffix = Guid.NewGuid().ToString("N")[..8].ToUpperInvariant();
+            return $"NP-MOCK-{orderNumber}-{suffix}";
         }
     }
 }
