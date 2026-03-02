@@ -51,7 +51,8 @@ namespace BladeVault.Application.Users.Commands.LoginUser
                 AccessToken: token,
                 UserId: user.Id,
                 FullName: $"{user.FirstName} {user.LastName}",
-                Role: user.Role.ToString());
+                Role: user.Role.ToString(),
+                MustChangePassword: user.MustChangePassword);
         }
     }
 }
