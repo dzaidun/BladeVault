@@ -5,5 +5,7 @@ namespace BladeVault.WebAPI.Authorization
         public const string OwnerOrAdmin = nameof(OwnerOrAdmin);
         public const string ProductManagement = nameof(ProductManagement);
         public const string OrderStatusManagement = nameof(OrderStatusManagement);
+        public const string StockManagement = nameof(StockManagement);
+        public const string StockRead = nameof(StockRead);
     }
 }

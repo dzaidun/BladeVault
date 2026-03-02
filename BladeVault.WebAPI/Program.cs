@@ -45,6 +45,14 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy(
         AuthorizationPolicies.OrderStatusManagement,
         policy => policy.RequireRole("Owner", "Admin", "CallCenter", "Warehouse"));
+
+    options.AddPolicy(
+        AuthorizationPolicies.StockManagement,
+        policy => policy.RequireRole("Owner", "Admin", "CatalogManager"));
+
+    options.AddPolicy(
+        AuthorizationPolicies.StockRead,
+        policy => policy.RequireRole("Owner", "Admin", "CatalogManager", "CallCenter", "Warehouse"));
 });
 
 // ── Swagger ───────────────────────────────────────────────────
