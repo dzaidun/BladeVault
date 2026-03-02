@@ -29,6 +29,9 @@ namespace BladeVault.Infrastructure.Persistence
         public DbSet<OrderItem> OrderItems => Set<OrderItem>();
         public DbSet<Payment> Payments => Set<Payment>();
 
+        // Call center
+        public DbSet<CallLog> CallLogs => Set<CallLog>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

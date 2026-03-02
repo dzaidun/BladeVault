@@ -19,6 +19,7 @@ namespace BladeVault.Infrastructure.Persistence
         private IStockMovementRepository? _stockMovements;
         private IOrderRepository? _orders;
         private IUserRepository? _users;
+        private ICallLogRepository? _callLogs;
 
         public UnitOfWork(AppDbContext context)
         {
@@ -49,6 +50,9 @@ namespace BladeVault.Infrastructure.Persistence
 
         public IUserRepository Users
             => _users ??= new UserRepository(_context);
+
+        public ICallLogRepository CallLogs
+            => _callLogs ??= new CallLogRepository(_context);
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
             => await _context.SaveChangesAsync(cancellationToken);
