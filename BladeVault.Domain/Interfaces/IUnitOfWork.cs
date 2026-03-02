@@ -15,6 +15,7 @@ namespace BladeVault.Domain.Interfaces
         IStockMovementRepository StockMovements { get; }
         IOrderRepository Orders { get; }
         IUserRepository Users { get; }
+        ICallLogRepository CallLogs { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
         Task BeginTransactionAsync(CancellationToken cancellationToken = default);
