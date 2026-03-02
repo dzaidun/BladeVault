@@ -1,5 +1,6 @@
-﻿using BladeVault.Application.Users.Queries.GetUserProfile;
-using BladeVault.Domain.Entities;
+﻿using BladeVault.Application.Users.Commands.ChangeTemporaryPassword;
+using BladeVault.Application.Users.Commands.CreateStaffUser;
+using BladeVault.Application.Users.Queries.GetUserProfile;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -48,6 +49,39 @@ namespace BladeVault.WebAPI.Controllers
         {
             var result = await _sender.Send(new GetUserProfileQuery(id), cancellationToken);
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Створити працівника (тільки Owner/Admin)
+        /// </summary>
+        [HttpPost("staff")]
+        [Authorize(Roles = "Owner,Admin")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> CreateStaffUser(
+            [FromBody] CreateStaffUserCommand command,
+            CancellationToken cancellationToken)
+        {
+            var result = await _sender.Send(command with { CreatedByUserId = GetCurrentUserId() }, cancellationToken);
+            return CreatedAtAction(nameof(GetUserById), new { id = result.UserId }, result);
+        }
+
+        /// <summary>
+        /// Змінити тимчасовий пароль після першого входу
+        /// </summary>
+        [HttpPost("change-temporary-password")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> ChangeTemporaryPassword(
+            [FromBody] ChangeTemporaryPasswordCommand command,
+            CancellationToken cancellationToken)
+        {
+            await _sender.Send(command with { UserId = GetCurrentUserId() }, cancellationToken);
+            return NoContent();
         }
 
         // ── Helpers ───────────────────────────────────────────────
