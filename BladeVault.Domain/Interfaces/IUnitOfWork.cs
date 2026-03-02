@@ -12,6 +12,7 @@ namespace BladeVault.Domain.Interfaces
         IProductRepository Products { get; }
         ICategoryRepository Categories { get; }
         IStockRepository Stock { get; }
+        IStockMovementRepository StockMovements { get; }
         IOrderRepository Orders { get; }
         IUserRepository Users { get; }
 

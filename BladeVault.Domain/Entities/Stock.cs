@@ -36,6 +36,15 @@ namespace BladeVault.Domain.Entities
             return Result.Success();
         }
 
+        public Result RemoveStock(int amount)
+        {
+            if (amount <= 0) return Result.Failure("Кількість має бути більше 0");
+            if (AvailableQuantity < amount) return Result.Failure("Недостатньо вільного товару на складі");
+            Quantity -= amount;
+            SetUpdatedAt();
+            return Result.Success();
+        }
+
         public Result Reserve(int amount)
         {
             if (amount <= 0) return Result.Failure("Кількість має бути більше 0");
