@@ -24,6 +24,9 @@ namespace BladeVault.Infrastructure
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
+            // Seed initial owner
+            services.AddHostedService<InitialOwnerSeederHostedService>();
+
             // JwtSettings
             services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
 
