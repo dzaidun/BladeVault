@@ -34,7 +34,7 @@ namespace BladeVault.Application.Orders.Commands.ChangeOrderStatus
                 { "status", [result.Error!] }
             });
 
-            // 3. Якщо замовлення відправлено — спис��ємо товар зі складу
+            // 3. Якщо замовлення відправлено — спис��емо товар зі складу
             if (command.NewStatus == OrderStatus.Shipped)
             {
                 await _uow.BeginTransactionAsync(cancellationToken);
@@ -46,7 +46,16 @@ namespace BladeVault.Application.Orders.Commands.ChangeOrderStatus
                         if (stock != null)
                         {
                             stock.WriteOff(item.Quantity);
+
+                            var movement = StockMovement.Create(
+                                productId: item.ProductId,
+                                movementType: StockMovementType.WriteOff,
+                                quantity: item.Quantity,
+                                reason: $"Списання при відправці замовлення {order.OrderNumber}",
+                                documentReference: order.OrderNumber);
+
                             _uow.Stock.Update(stock);
+                            await _uow.StockMovements.AddAsync(movement, cancellationToken);
                         }
                     }
 
@@ -75,7 +84,16 @@ namespace BladeVault.Application.Orders.Commands.ChangeOrderStatus
                         if (stock != null)
                         {
                             stock.Release(item.Quantity);
+
+                            var movement = StockMovement.Create(
+                                productId: item.ProductId,
+                                movementType: StockMovementType.Release,
+                                quantity: item.Quantity,
+                                reason: $"Звільнення резерву при скасуванні замовлення {order.OrderNumber}",
+                                documentReference: order.OrderNumber);
+
                             _uow.Stock.Update(stock);
+                            await _uow.StockMovements.AddAsync(movement, cancellationToken);
                         }
                     }
 

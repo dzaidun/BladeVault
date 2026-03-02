@@ -98,7 +98,16 @@ namespace BladeVault.Application.Orders.Commands.CreateOrder
                         { "stock", [reserveResult.Error!] }
                     });
 
+                    var movement = StockMovement.Create(
+                        productId: itemDto.ProductId,
+                        movementType: StockMovementType.Reserve,
+                        quantity: itemDto.Quantity,
+                        reason: $"Резерв при створенні замовлення {order.OrderNumber}",
+                        performedByUserId: command.UserId,
+                        documentReference: order.OrderNumber);
+
                     _uow.Stock.Update(stock);
+                    await _uow.StockMovements.AddAsync(movement, cancellationToken);
                 }
 
                 await _uow.Orders.AddAsync(order, cancellationToken);
