@@ -1,6 +1,7 @@
 ﻿using BladeVault.Application.Users.Commands.ChangeTemporaryPassword;
 using BladeVault.Application.Users.Commands.CreateStaffUser;
 using BladeVault.Application.Users.Queries.GetUserProfile;
+using BladeVault.WebAPI.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -38,7 +39,7 @@ namespace BladeVault.WebAPI.Controllers
         /// Отримати профіль користувача по Id (тільки Owner/Admin)
         /// </summary>
         [HttpGet("{id:guid}")]
-        [Authorize(Roles = "Owner,Admin")]
+        [Authorize(Policy = AuthorizationPolicies.OwnerOrAdmin)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -55,7 +56,7 @@ namespace BladeVault.WebAPI.Controllers
         /// Створити працівника (тільки Owner/Admin)
         /// </summary>
         [HttpPost("staff")]
-        [Authorize(Roles = "Owner,Admin")]
+        [Authorize(Policy = AuthorizationPolicies.OwnerOrAdmin)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

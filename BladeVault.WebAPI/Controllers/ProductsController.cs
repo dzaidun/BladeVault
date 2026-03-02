@@ -4,6 +4,7 @@ using BladeVault.Application.Products.Commands.UpdateKnife;
 using BladeVault.Application.Products.Queries.GetKnifeById;
 using BladeVault.Application.Products.Queries.GetKnifesByFilter;
 using BladeVault.Domain.Enums.ProductSpecs;
+using BladeVault.WebAPI.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -75,7 +76,7 @@ namespace BladeVault.WebAPI.Controllers
         /// Створити ніж (тільки Owner/Admin)
         /// </summary>
         [HttpPost("knife")]
-        [Authorize(Roles = "Owner,Admin")]
+        [Authorize(Policy = AuthorizationPolicies.ProductManagement)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -92,7 +93,7 @@ namespace BladeVault.WebAPI.Controllers
         /// Оновити ніж (тільки Owner/Admin)
         /// </summary>
         [HttpPut("knife/{id:guid}")]
-        [Authorize(Roles = "Owner,Admin")]
+        [Authorize(Policy = AuthorizationPolicies.ProductManagement)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -112,7 +113,7 @@ namespace BladeVault.WebAPI.Controllers
         /// Видалити продукт (soft delete, тільки Owner/Admin)
         /// </summary>
         [HttpDelete("{id:guid}")]
-        [Authorize(Roles = "Owner,Admin")]
+        [Authorize(Policy = AuthorizationPolicies.ProductManagement)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]

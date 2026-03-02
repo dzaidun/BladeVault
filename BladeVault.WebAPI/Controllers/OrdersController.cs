@@ -2,6 +2,7 @@
 using BladeVault.Application.Orders.Commands.CreateOrder;
 using BladeVault.Application.Orders.Queries.GetOrderById;
 using BladeVault.Domain.Enums;
+using BladeVault.WebAPI.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -54,7 +55,7 @@ namespace BladeVault.WebAPI.Controllers
         /// Змінити статус замовлення (тільки Owner/Admin)
         /// </summary>
         [HttpPatch("{id:guid}/status")]
-        [Authorize(Roles = "Owner,Admin")]
+        [Authorize(Policy = AuthorizationPolicies.OrderStatusManagement)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

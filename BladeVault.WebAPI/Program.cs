@@ -1,5 +1,6 @@
 using BladeVault.Application;
 using BladeVault.Infrastructure;
+using BladeVault.WebAPI.Authorization;
 using BladeVault.WebAPI.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -31,7 +32,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(
+        AuthorizationPolicies.OwnerOrAdmin,
+        policy => policy.RequireRole("Owner", "Admin"));
+
+    options.AddPolicy(
+        AuthorizationPolicies.ProductManagement,
+        policy => policy.RequireRole("Owner", "Admin", "CatalogManager"));
+
+    options.AddPolicy(
+        AuthorizationPolicies.OrderStatusManagement,
+        policy => policy.RequireRole("Owner", "Admin", "CallCenter", "Warehouse"));
+});
 
 // ── Swagger ───────────────────────────────────────────────────
 builder.Services.AddEndpointsApiExplorer();
