@@ -19,6 +19,7 @@ namespace BladeVault.Infrastructure.Persistence
         public DbSet<ToolComponent> ToolComponents => Set<ToolComponent>();
         public DbSet<ProductImage> ProductImages => Set<ProductImage>();
         public DbSet<Stock> Stocks => Set<Stock>();
+        public DbSet<StockMovement> StockMovements => Set<StockMovement>();
 
         // Категорії
         public DbSet<Category> Categories => Set<Category>();

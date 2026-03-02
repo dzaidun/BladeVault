@@ -16,6 +16,7 @@ namespace BladeVault.Infrastructure.Persistence
         private IProductRepository? _products;
         private ICategoryRepository? _categories;
         private IStockRepository? _stock;
+        private IStockMovementRepository? _stockMovements;
         private IOrderRepository? _orders;
         private IUserRepository? _users;
 
@@ -39,6 +40,9 @@ namespace BladeVault.Infrastructure.Persistence
 
         public IStockRepository Stock
             => _stock ??= new StockRepository(_context);
+
+        public IStockMovementRepository StockMovements
+            => _stockMovements ??= new StockMovementRepository(_context);
 
         public IOrderRepository Orders
             => _orders ??= new OrderRepository(_context);
