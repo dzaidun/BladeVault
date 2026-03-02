@@ -51,10 +51,10 @@ namespace BladeVault.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Змінити статус замовлення (тільки Admin)
+        /// Змінити статус замовлення (тільки Owner/Admin)
         /// </summary>
         [HttpPatch("{id:guid}/status")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Owner,Admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

@@ -72,10 +72,10 @@ namespace BladeVault.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Створити ніж (тільки Admin)
+        /// Створити ніж (тільки Owner/Admin)
         /// </summary>
         [HttpPost("knife")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Owner,Admin")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -89,10 +89,10 @@ namespace BladeVault.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Оновити ніж (тільки Admin)
+        /// Оновити ніж (тільки Owner/Admin)
         /// </summary>
         [HttpPut("knife/{id:guid}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Owner,Admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -109,10 +109,10 @@ namespace BladeVault.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Видалити продукт (soft delete, тільки Admin)
+        /// Видалити продукт (soft delete, тільки Owner/Admin)
         /// </summary>
         [HttpDelete("{id:guid}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Owner,Admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]

@@ -34,10 +34,10 @@ namespace BladeVault.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Отримати профіль користувача по Id (тільки Admin)
+        /// Отримати профіль користувача по Id (тільки Owner/Admin)
         /// </summary>
         [HttpGet("{id:guid}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Owner,Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
