@@ -1,9 +1,6 @@
 ﻿using BladeVault.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BladeVault.Infrastructure.Persistence.Configurations
 {
@@ -52,6 +49,17 @@ namespace BladeVault.Infrastructure.Persistence.Configurations
             builder.Property(x => x.IsActive)
                 .HasColumnName("is_active")
                 .HasDefaultValue(true);
+
+            builder.Property(x => x.MustChangePassword)
+                .HasColumnName("must_change_password")
+                .HasDefaultValue(false)
+                .IsRequired();
+
+            builder.Property(x => x.TemporaryPasswordIssuedAt)
+                .HasColumnName("temporary_password_issued_at");
+
+            builder.Property(x => x.CreatedByUserId)
+                .HasColumnName("created_by_user_id");
 
             builder.Property(x => x.CreatedAt)
                 .HasColumnName("created_at");
