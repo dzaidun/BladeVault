@@ -8,6 +8,7 @@ namespace BladeVault.Domain.Enums
     {
         Customer = 1,
         Owner = 2,
+        Admin = 2,
         Analyst = 3,
         CatalogManager = 4,
         CallCenter = 5,
