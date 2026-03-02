@@ -72,10 +72,18 @@ namespace BladeVault.WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> MarkShipped(Guid id, CancellationToken cancellationToken)
+        public async Task<IActionResult> MarkShipped(
+            Guid id,
+            [FromBody] ShipOrderRequest? request,
+            CancellationToken cancellationToken)
         {
-            await _sender.Send(new ChangeOrderStatusCommand(id, OrderStatus.Shipped), cancellationToken);
+            await _sender.Send(
+                new ChangeOrderStatusCommand(id, OrderStatus.Shipped, request?.TrackingNumber),
+                cancellationToken);
+
             return NoContent();
         }
+
+        public record ShipOrderRequest(string? TrackingNumber);
     }
 }
