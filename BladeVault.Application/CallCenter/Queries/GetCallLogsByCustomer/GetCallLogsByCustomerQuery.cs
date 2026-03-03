@@ -1,9 +1,13 @@
+using BladeVault.Application.Common.Models;
 using MediatR;
 
 namespace BladeVault.Application.CallCenter.Queries.GetCallLogsByCustomer
 {
-    public record GetCallLogsByCustomerQuery(Guid CustomerId)
-        : IRequest<IReadOnlyList<CallLogDto>>;
+    public record GetCallLogsByCustomerQuery(
+        Guid CustomerId,
+        int Page = 1,
+        int PageSize = 20)
+        : IRequest<PagedResult<CallLogDto>>;
 
     public record CallLogDto(
         Guid Id,

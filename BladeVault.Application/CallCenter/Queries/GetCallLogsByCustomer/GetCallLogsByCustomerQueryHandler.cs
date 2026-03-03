@@ -1,10 +1,11 @@
+using BladeVault.Application.Common.Models;
 using BladeVault.Domain.Interfaces;
 using MediatR;
 
 namespace BladeVault.Application.CallCenter.Queries.GetCallLogsByCustomer
 {
     public class GetCallLogsByCustomerQueryHandler
-        : IRequestHandler<GetCallLogsByCustomerQuery, IReadOnlyList<CallLogDto>>
+        : IRequestHandler<GetCallLogsByCustomerQuery, PagedResult<CallLogDto>>
     {
         private readonly IUnitOfWork _uow;
 
@@ -13,13 +14,19 @@ namespace BladeVault.Application.CallCenter.Queries.GetCallLogsByCustomer
             _uow = uow;
         }
 
-        public async Task<IReadOnlyList<CallLogDto>> Handle(
+        public async Task<PagedResult<CallLogDto>> Handle(
             GetCallLogsByCustomerQuery query,
             CancellationToken cancellationToken)
         {
+            var page = query.Page < 1 ? 1 : query.Page;
+            var pageSize = query.PageSize is < 1 or > 200 ? 20 : query.PageSize;
+
             var logs = await _uow.CallLogs.GetByCustomerIdAsync(query.CustomerId, cancellationToken);
 
-            return logs
+            var totalCount = logs.Count;
+            var items = logs
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .Select(x => new CallLogDto(
                     Id: x.Id,
                     CustomerId: x.CustomerId,
@@ -30,6 +37,8 @@ namespace BladeVault.Application.CallCenter.Queries.GetCallLogsByCustomer
                     PerformedByUserId: x.PerformedByUserId,
                     CreatedAt: x.CreatedAt))
                 .ToList();
+
+            return new PagedResult<CallLogDto>(items, totalCount, page, pageSize);
         }
     }
 }

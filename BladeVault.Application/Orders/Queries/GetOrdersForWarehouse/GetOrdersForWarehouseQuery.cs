@@ -1,8 +1,13 @@
+using BladeVault.Application.Common.Models;
+using BladeVault.Domain.Enums;
 using MediatR;
 
 namespace BladeVault.Application.Orders.Queries.GetOrdersForWarehouse
 {
-    public record GetOrdersForWarehouseQuery : IRequest<IReadOnlyList<WarehouseOrderDto>>;
+    public record GetOrdersForWarehouseQuery(
+        OrderStatus? Status = null,
+        int Page = 1,
+        int PageSize = 20) : IRequest<PagedResult<WarehouseOrderDto>>;
 
     public record WarehouseOrderDto
     {

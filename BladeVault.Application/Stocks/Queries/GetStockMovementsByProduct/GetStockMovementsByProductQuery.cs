@@ -1,9 +1,13 @@
+using BladeVault.Application.Common.Models;
 using MediatR;
 
 namespace BladeVault.Application.Stocks.Queries.GetStockMovementsByProduct
 {
-    public record GetStockMovementsByProductQuery(Guid ProductId)
-        : IRequest<IReadOnlyList<StockMovementDto>>;
+    public record GetStockMovementsByProductQuery(
+        Guid ProductId,
+        int Page = 1,
+        int PageSize = 20)
+        : IRequest<PagedResult<StockMovementDto>>;
 
     public record StockMovementDto(
         Guid Id,
