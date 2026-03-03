@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 /BladeVault.WebAPI/appsettings.Development.json
+/.github/copilot-instructions.md

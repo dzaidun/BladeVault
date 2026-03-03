@@ -45,6 +45,21 @@ namespace BladeVault.Infrastructure.Persistence.Configurations
             builder.Property(x => x.UpdatedAt)
                 .HasColumnName("updated_at");
 
+            builder.HasOne<User>()
+                .WithMany()
+                .HasForeignKey(x => x.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne<User>()
+                .WithMany()
+                .HasForeignKey(x => x.PerformedByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne<Order>()
+                .WithMany()
+                .HasForeignKey(x => x.OrderId)
+                .OnDelete(DeleteBehavior.SetNull);
+
             builder.HasIndex(x => x.CustomerId);
             builder.HasIndex(x => x.OrderId);
             builder.HasIndex(x => x.CreatedAt);
