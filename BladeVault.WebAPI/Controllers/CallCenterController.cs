@@ -1,5 +1,6 @@
 using BladeVault.Application.CallCenter.Commands.CreateCallLog;
 using BladeVault.Application.CallCenter.Queries.GetCallLogsByCustomer;
+using BladeVault.Domain.Enums;
 using BladeVault.WebAPI.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -48,11 +49,17 @@ namespace BladeVault.WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetCallLogsByCustomer(
             Guid customerId,
+            [FromQuery] CallStatus? status,
+            [FromQuery] DateTime? from,
+            [FromQuery] DateTime? to,
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 20,
             CancellationToken cancellationToken = default)
         {
-            var result = await _sender.Send(new GetCallLogsByCustomerQuery(customerId, page, pageSize), cancellationToken);
+            var result = await _sender.Send(
+                new GetCallLogsByCustomerQuery(customerId, status, from, to, page, pageSize),
+                cancellationToken);
+
             return Ok(result);
         }
 

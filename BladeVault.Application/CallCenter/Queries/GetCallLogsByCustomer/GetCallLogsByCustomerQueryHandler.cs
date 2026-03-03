@@ -23,8 +23,19 @@ namespace BladeVault.Application.CallCenter.Queries.GetCallLogsByCustomer
 
             var logs = await _uow.CallLogs.GetByCustomerIdAsync(query.CustomerId, cancellationToken);
 
-            var totalCount = logs.Count;
-            var items = logs
+            var filtered = logs.AsEnumerable();
+
+            if (query.Status.HasValue)
+                filtered = filtered.Where(x => x.Status == query.Status.Value);
+
+            if (query.From.HasValue)
+                filtered = filtered.Where(x => x.CreatedAt >= query.From.Value);
+
+            if (query.To.HasValue)
+                filtered = filtered.Where(x => x.CreatedAt <= query.To.Value);
+
+            var totalCount = filtered.Count();
+            var items = filtered
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .Select(x => new CallLogDto(

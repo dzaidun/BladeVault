@@ -1,5 +1,6 @@
 using BladeVault.Application.Stocks.Commands.ChangeStockBalance;
 using BladeVault.Application.Stocks.Queries.GetStockMovementsByProduct;
+using BladeVault.Domain.Enums;
 using BladeVault.WebAPI.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -48,11 +49,17 @@ namespace BladeVault.WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetMovementsByProduct(
             Guid productId,
+            [FromQuery] StockMovementType? movementType,
+            [FromQuery] DateTime? from,
+            [FromQuery] DateTime? to,
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 20,
             CancellationToken cancellationToken = default)
         {
-            var result = await _sender.Send(new GetStockMovementsByProductQuery(productId, page, pageSize), cancellationToken);
+            var result = await _sender.Send(
+                new GetStockMovementsByProductQuery(productId, movementType, from, to, page, pageSize),
+                cancellationToken);
+
             return Ok(result);
         }
 
