@@ -17,10 +17,11 @@ namespace BladeVault.WebAPI.Tests.Authorization
         [Fact]
         public async Task Analytics_AnalystRole_ShouldBeAllowed()
         {
+            var ct = TestContext.Current.CancellationToken;
             using var request = new HttpRequestMessage(HttpMethod.Get, "/api/analytics/dashboard");
             request.Headers.Add(TestAuthHandler.RolesHeader, "Analyst");
 
-            var response = await _client.SendAsync(request);
+            var response = await _client.SendAsync(request, ct);
 
             response.StatusCode.Should().NotBe(HttpStatusCode.Forbidden);
             response.StatusCode.Should().NotBe(HttpStatusCode.Unauthorized);
@@ -29,10 +30,11 @@ namespace BladeVault.WebAPI.Tests.Authorization
         [Fact]
         public async Task Analytics_CallCenterRole_ShouldBeForbidden()
         {
+            var ct = TestContext.Current.CancellationToken;
             using var request = new HttpRequestMessage(HttpMethod.Get, "/api/analytics/dashboard");
             request.Headers.Add(TestAuthHandler.RolesHeader, "CallCenter");
 
-            var response = await _client.SendAsync(request);
+            var response = await _client.SendAsync(request, ct);
 
             response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         }
@@ -40,6 +42,7 @@ namespace BladeVault.WebAPI.Tests.Authorization
         [Fact]
         public async Task StockChange_CatalogManagerRole_ShouldBeAllowed()
         {
+            var ct = TestContext.Current.CancellationToken;
             using var request = new HttpRequestMessage(HttpMethod.Post, "/api/stock/change-balance")
             {
                 Content = JsonContent.Create(new
@@ -51,7 +54,7 @@ namespace BladeVault.WebAPI.Tests.Authorization
             };
             request.Headers.Add(TestAuthHandler.RolesHeader, "CatalogManager");
 
-            var response = await _client.SendAsync(request);
+            var response = await _client.SendAsync(request, ct);
 
             response.StatusCode.Should().NotBe(HttpStatusCode.Forbidden);
             response.StatusCode.Should().NotBe(HttpStatusCode.Unauthorized);
@@ -60,10 +63,11 @@ namespace BladeVault.WebAPI.Tests.Authorization
         [Fact]
         public async Task StockRead_CallCenterRole_ShouldBeAllowed()
         {
+            var ct = TestContext.Current.CancellationToken;
             using var request = new HttpRequestMessage(HttpMethod.Get, $"/api/stock/{Guid.NewGuid()}/movements");
             request.Headers.Add(TestAuthHandler.RolesHeader, "CallCenter");
 
-            var response = await _client.SendAsync(request);
+            var response = await _client.SendAsync(request, ct);
 
             response.StatusCode.Should().NotBe(HttpStatusCode.Forbidden);
             response.StatusCode.Should().NotBe(HttpStatusCode.Unauthorized);
@@ -72,10 +76,11 @@ namespace BladeVault.WebAPI.Tests.Authorization
         [Fact]
         public async Task CallCenterLogs_WarehouseRole_ShouldBeForbidden()
         {
+            var ct = TestContext.Current.CancellationToken;
             using var request = new HttpRequestMessage(HttpMethod.Get, $"/api/callcenter/customers/{Guid.NewGuid()}/logs");
             request.Headers.Add(TestAuthHandler.RolesHeader, "Warehouse");
 
-            var response = await _client.SendAsync(request);
+            var response = await _client.SendAsync(request, ct);
 
             response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         }
@@ -83,10 +88,11 @@ namespace BladeVault.WebAPI.Tests.Authorization
         [Fact]
         public async Task WarehouseOrders_WarehouseRole_ShouldBeAllowed()
         {
+            var ct = TestContext.Current.CancellationToken;
             using var request = new HttpRequestMessage(HttpMethod.Get, "/api/warehouse/orders");
             request.Headers.Add(TestAuthHandler.RolesHeader, "Warehouse");
 
-            var response = await _client.SendAsync(request);
+            var response = await _client.SendAsync(request, ct);
 
             response.StatusCode.Should().NotBe(HttpStatusCode.Forbidden);
             response.StatusCode.Should().NotBe(HttpStatusCode.Unauthorized);
@@ -95,10 +101,11 @@ namespace BladeVault.WebAPI.Tests.Authorization
         [Fact]
         public async Task WarehouseOrders_AnalystRole_ShouldBeForbidden()
         {
+            var ct = TestContext.Current.CancellationToken;
             using var request = new HttpRequestMessage(HttpMethod.Get, "/api/warehouse/orders");
             request.Headers.Add(TestAuthHandler.RolesHeader, "Analyst");
 
-            var response = await _client.SendAsync(request);
+            var response = await _client.SendAsync(request, ct);
 
             response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         }

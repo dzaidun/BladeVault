@@ -25,23 +25,24 @@ namespace BladeVault.WebAPI.Tests.Flows
         [Fact]
         public async Task Warehouse_Workflow_ShouldMoveOrderToShippedAndSetTracking()
         {
+            var ct = TestContext.Current.CancellationToken;
             var fakeSender = _factory.Services.GetRequiredService<ISender>().Should().BeOfType<FakeSender>().Subject;
             var orderId = fakeSender.SeedWarehouseOrderId;
 
             using var startAssembly = new HttpRequestMessage(HttpMethod.Post, $"/api/warehouse/orders/{orderId}/start-assembly");
             startAssembly.Headers.Add(TestAuthHandler.RolesHeader, "Warehouse");
-            (await _client.SendAsync(startAssembly)).StatusCode.Should().Be(HttpStatusCode.NoContent);
+            (await _client.SendAsync(startAssembly, ct)).StatusCode.Should().Be(HttpStatusCode.NoContent);
 
             using var readyToShip = new HttpRequestMessage(HttpMethod.Post, $"/api/warehouse/orders/{orderId}/ready-to-ship");
             readyToShip.Headers.Add(TestAuthHandler.RolesHeader, "Warehouse");
-            (await _client.SendAsync(readyToShip)).StatusCode.Should().Be(HttpStatusCode.NoContent);
+            (await _client.SendAsync(readyToShip, ct)).StatusCode.Should().Be(HttpStatusCode.NoContent);
 
             using var ship = new HttpRequestMessage(HttpMethod.Post, $"/api/warehouse/orders/{orderId}/ship")
             {
                 Content = JsonContent.Create(new { trackingNumber = "NP-REAL-123456" })
             };
             ship.Headers.Add(TestAuthHandler.RolesHeader, "Warehouse");
-            (await _client.SendAsync(ship)).StatusCode.Should().Be(HttpStatusCode.NoContent);
+            (await _client.SendAsync(ship, ct)).StatusCode.Should().Be(HttpStatusCode.NoContent);
 
             fakeSender.GetOrderStatus(orderId).Should().Be(OrderStatus.Shipped);
             fakeSender.GetOrderTracking(orderId).Should().Be("NP-REAL-123456");
@@ -50,6 +51,7 @@ namespace BladeVault.WebAPI.Tests.Flows
         [Fact]
         public async Task Stock_ChangeBalance_ThenGetMovements_ShouldReturnAuditHistory()
         {
+            var ct = TestContext.Current.CancellationToken;
             var productId = Guid.NewGuid();
 
             using var addStock = new HttpRequestMessage(HttpMethod.Post, "/api/stock/change-balance")
@@ -63,7 +65,7 @@ namespace BladeVault.WebAPI.Tests.Flows
                 })
             };
             addStock.Headers.Add(TestAuthHandler.RolesHeader, "CatalogManager");
-            (await _client.SendAsync(addStock)).StatusCode.Should().Be(HttpStatusCode.NoContent);
+            (await _client.SendAsync(addStock, ct)).StatusCode.Should().Be(HttpStatusCode.NoContent);
 
             using var writeOff = new HttpRequestMessage(HttpMethod.Post, "/api/stock/change-balance")
             {
@@ -76,17 +78,17 @@ namespace BladeVault.WebAPI.Tests.Flows
                 })
             };
             writeOff.Headers.Add(TestAuthHandler.RolesHeader, "CatalogManager");
-            (await _client.SendAsync(writeOff)).StatusCode.Should().Be(HttpStatusCode.NoContent);
+            (await _client.SendAsync(writeOff, ct)).StatusCode.Should().Be(HttpStatusCode.NoContent);
 
             using var getMovements = new HttpRequestMessage(
                 HttpMethod.Get,
                 $"/api/stock/{productId}/movements?movementType=Inbound&page=1&pageSize=20");
             getMovements.Headers.Add(TestAuthHandler.RolesHeader, "CallCenter");
 
-            var response = await _client.SendAsync(getMovements);
+            var response = await _client.SendAsync(getMovements, ct);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var data = await response.Content.ReadFromJsonAsync<PagedResult<StockMovementDto>>();
+            var data = await response.Content.ReadFromJsonAsync<PagedResult<StockMovementDto>>(ct);
             data.Should().NotBeNull();
             data!.TotalCount.Should().Be(1);
             data.Items.Should().ContainSingle();
@@ -96,6 +98,7 @@ namespace BladeVault.WebAPI.Tests.Flows
         [Fact]
         public async Task CallCenter_CreateLog_ThenGetLogs_ShouldReturnCreatedEntry()
         {
+            var ct = TestContext.Current.CancellationToken;
             var customerId = Guid.NewGuid();
 
             using var createLog = new HttpRequestMessage(HttpMethod.Post, "/api/callcenter/logs")
@@ -110,7 +113,7 @@ namespace BladeVault.WebAPI.Tests.Flows
             };
             createLog.Headers.Add(TestAuthHandler.RolesHeader, "CallCenter");
 
-            var createResponse = await _client.SendAsync(createLog);
+            var createResponse = await _client.SendAsync(createLog, ct);
             createResponse.StatusCode.Should().Be(HttpStatusCode.Created);
 
             using var getLogs = new HttpRequestMessage(
@@ -118,10 +121,10 @@ namespace BladeVault.WebAPI.Tests.Flows
                 $"/api/callcenter/customers/{customerId}/logs?status=NeedCallback&page=1&pageSize=20");
             getLogs.Headers.Add(TestAuthHandler.RolesHeader, "CallCenter");
 
-            var logsResponse = await _client.SendAsync(getLogs);
+            var logsResponse = await _client.SendAsync(getLogs, ct);
             logsResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var data = await logsResponse.Content.ReadFromJsonAsync<PagedResult<CallLogDto>>();
+            var data = await logsResponse.Content.ReadFromJsonAsync<PagedResult<CallLogDto>>(ct);
             data.Should().NotBeNull();
             data!.TotalCount.Should().Be(1);
             data.Items.Should().ContainSingle();
