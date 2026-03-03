@@ -10,10 +10,14 @@ namespace BladeVault.Application.Orders.Commands.ChangeOrderStatus
     public class ChangeOrderStatusCommandHandler : IRequestHandler<ChangeOrderStatusCommand>
     {
         private readonly IUnitOfWork _uow;
+        private readonly IShipmentTrackingProvider _shipmentTrackingProvider;
 
-        public ChangeOrderStatusCommandHandler(IUnitOfWork uow)
+        public ChangeOrderStatusCommandHandler(
+            IUnitOfWork uow,
+            IShipmentTrackingProvider shipmentTrackingProvider)
         {
             _uow = uow;
+            _shipmentTrackingProvider = shipmentTrackingProvider;
         }
 
         public async Task Handle(
@@ -34,7 +38,7 @@ namespace BladeVault.Application.Orders.Commands.ChangeOrderStatus
             if (command.NewStatus == OrderStatus.Shipped)
             {
                 var trackingNumber = string.IsNullOrWhiteSpace(command.TrackingNumber)
-                    ? GenerateTemporaryTrackingNumber(order.OrderNumber)
+                    ? await _shipmentTrackingProvider.GenerateTrackingNumberAsync(order.OrderNumber, cancellationToken)
                     : command.TrackingNumber.Trim();
 
                 order.SetTrackingNumber(trackingNumber);
@@ -113,12 +117,6 @@ namespace BladeVault.Application.Orders.Commands.ChangeOrderStatus
 
             _uow.Orders.Update(order);
             await _uow.SaveChangesAsync(cancellationToken);
-        }
-
-        private static string GenerateTemporaryTrackingNumber(string orderNumber)
-        {
-            var suffix = Guid.NewGuid().ToString("N")[..8].ToUpperInvariant();
-            return $"NP-MOCK-{orderNumber}-{suffix}";
         }
     }
 }
