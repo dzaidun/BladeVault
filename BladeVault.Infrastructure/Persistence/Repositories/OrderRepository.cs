@@ -48,5 +48,14 @@ namespace BladeVault.Infrastructure.Persistence.Repositories
                 .Where(x => x.Status == OrderStatus.Confirmed || x.Status == OrderStatus.InAssembly)
                 .OrderBy(x => x.CreatedAt)
                 .ToListAsync(cancellationToken);
+
+        public async Task<IReadOnlyList<Order>> GetForAnalyticsAsync(
+            DateTime from,
+            DateTime to,
+            CancellationToken cancellationToken = default)
+            => await _dbSet
+                .Include(x => x.Items)
+                .Where(x => x.CreatedAt >= from && x.CreatedAt <= to)
+                .ToListAsync(cancellationToken);
     }
 }
