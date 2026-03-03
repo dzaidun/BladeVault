@@ -1,9 +1,6 @@
 ﻿using BladeVault.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BladeVault.Infrastructure.Persistence.Configurations
 {
@@ -50,7 +47,7 @@ namespace BladeVault.Infrastructure.Persistence.Configurations
 
             // Зв'язок з продуктом
             builder.HasOne(x => x.Product)
-                .WithMany()
+                .WithMany(x => x.OrderItems)
                 .HasForeignKey(x => x.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
