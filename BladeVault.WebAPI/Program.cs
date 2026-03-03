@@ -61,6 +61,10 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy(
         AuthorizationPolicies.WarehouseOperations,
         policy => policy.RequireRole("Owner", "Admin", "Warehouse"));
+
+    options.AddPolicy(
+        AuthorizationPolicies.AnalyticsRead,
+        policy => policy.RequireRole("Owner", "Admin", "Analyst"));
 });
 
 // ── Swagger ───────────────────────────────────────────────────

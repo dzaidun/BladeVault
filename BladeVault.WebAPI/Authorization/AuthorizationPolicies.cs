@@ -9,5 +9,6 @@ namespace BladeVault.WebAPI.Authorization
         public const string StockRead = nameof(StockRead);
         public const string CallCenterOperations = nameof(CallCenterOperations);
         public const string WarehouseOperations = nameof(WarehouseOperations);
+        public const string AnalyticsRead = nameof(AnalyticsRead);
     }
 }
