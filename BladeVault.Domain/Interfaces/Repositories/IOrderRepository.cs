@@ -14,5 +14,9 @@ namespace BladeVault.Domain.Interfaces.Repositories
         Task<IReadOnlyList<Order>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
         Task<IReadOnlyList<Order>> GetByStatusAsync(OrderStatus status, CancellationToken cancellationToken = default);
         Task<IReadOnlyList<Order>> GetForWarehouseAsync(CancellationToken cancellationToken = default);
+        Task<IReadOnlyList<Order>> GetForAnalyticsAsync(
+            DateTime from,
+            DateTime to,
+            CancellationToken cancellationToken = default);
     }
 }
