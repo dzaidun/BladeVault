@@ -23,6 +23,7 @@ namespace BladeVault.Infrastructure
             // Services
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+            services.AddScoped<IShipmentTrackingProvider, MockShipmentTrackingProvider>();
 
             // Seed initial owner
             services.AddHostedService<InitialOwnerSeederHostedService>();
