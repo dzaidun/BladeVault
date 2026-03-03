@@ -48,9 +48,11 @@ namespace BladeVault.WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetCallLogsByCustomer(
             Guid customerId,
-            CancellationToken cancellationToken)
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 20,
+            CancellationToken cancellationToken = default)
         {
-            var result = await _sender.Send(new GetCallLogsByCustomerQuery(customerId), cancellationToken);
+            var result = await _sender.Send(new GetCallLogsByCustomerQuery(customerId, page, pageSize), cancellationToken);
             return Ok(result);
         }
 
