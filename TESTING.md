@@ -49,6 +49,19 @@ Example:
 X-Test-Roles: Warehouse
 ```
 
+## Role access matrix (current policies)
+
+| Policy | Allowed roles |
+|---|---|
+| `OwnerOrAdmin` | `Owner`, `Admin` |
+| `ProductManagement` | `Owner`, `Admin`, `CatalogManager` |
+| `OrderStatusManagement` | `Owner`, `Admin`, `CallCenter`, `Warehouse` |
+| `StockManagement` | `Owner`, `Admin`, `CatalogManager` |
+| `StockRead` | `Owner`, `Admin`, `CatalogManager`, `CallCenter`, `Warehouse` |
+| `CallCenterOperations` | `Owner`, `Admin`, `CallCenter` |
+| `WarehouseOperations` | `Owner`, `Admin`, `Warehouse` |
+| `AnalyticsRead` | `Owner`, `Admin`, `Analyst` |
+
 ## API examples for manual smoke checks
 
 ### Analytics
