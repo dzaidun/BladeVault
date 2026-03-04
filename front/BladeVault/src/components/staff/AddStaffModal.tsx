@@ -1,0 +1,203 @@
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  createStaffSchema,
+  type CreateStaffSchema,
+} from "../../lib/validators";
+import type { CreateStaffResponse } from "../../types/users";
+import { api } from "../../lib/api";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/dialog";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
+import { USER_ROLES } from "../../lib/constants";
+import toast from "react-hot-toast";
+
+interface AddStaffModalProps {
+  onClose: () => void;
+  onSuccess: (data: CreateStaffResponse) => void;
+}
+
+export const AddStaffModal: React.FC<AddStaffModalProps> = ({
+  onClose,
+  onSuccess,
+}) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const form = useForm<CreateStaffSchema>({
+    resolver: zodResolver(createStaffSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phoneNumber: "",
+      role: "",
+    },
+  });
+
+  const onSubmit = async (data: CreateStaffSchema) => {
+    try {
+      setIsLoading(true);
+      const response = await api.staff.createStaffUser({
+        ...data,
+        role: data.role as any, // Cast to UserRole
+      });
+      toast.success("Працівника успішно створено!");
+      onSuccess(response);
+    } catch (error: any) {
+      console.error("📋 Full error object:", error);
+      toast.error(error?.message || "Помилка при створенні працівника");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-[500px]">
+        <DialogHeader>
+          <DialogTitle>Додати працівника</DialogTitle>
+          <DialogDescription>
+            Заповніть форму для створення нового працівника. Система автоматично згенерує тимчасовий пароль.
+          </DialogDescription>
+        </DialogHeader>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Ім'я *</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Іван" {...field} disabled={isLoading} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Прізвище *</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Коваленко" {...field} disabled={isLoading} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email *</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="ivan@bladevault.com"
+                      {...field}
+                      disabled={isLoading}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="phoneNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Телефон</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="+380501234567"
+                      {...field}
+                      disabled={isLoading}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="role"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Роль *</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    disabled={isLoading}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Оберіть роль" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {USER_ROLES.filter((role) => role.value !== "Customer").map((role) => (
+                        <SelectItem key={role.value} value={role.value}>
+                          {role.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="flex gap-3 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                disabled={isLoading}
+                className="flex-1"
+              >
+                Скасувати
+              </Button>
+              <Button type="submit" disabled={isLoading} className="flex-1">
+                {isLoading ? "Створення..." : "Створити"}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+};
