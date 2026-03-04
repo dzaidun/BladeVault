@@ -1,9 +1,6 @@
 ﻿using BladeVault.Domain.Entities.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BladeVault.Infrastructure.Persistence.Configurations.Products
 {
@@ -12,6 +9,13 @@ namespace BladeVault.Infrastructure.Persistence.Configurations.Products
         public void Configure(EntityTypeBuilder<MultiTool> builder)
         {
             builder.ToTable("multi_tools");
+
+            // Явно визначаємо FK на батьківський тип Product
+            builder.HasOne<Product>()
+                .WithMany()
+                .HasForeignKey(x => x.Id)
+                .HasConstraintName("FK_multi_tools_products_id")
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Property(x => x.HandleMaterial)
                 .HasColumnName("handle_material")

@@ -15,6 +15,13 @@ namespace BladeVault.Infrastructure.Persistence.Configurations.Products
             // спільні поля (Name, Price тощо) — в таблиці "products"
             builder.ToTable("knives");
 
+            // Явно визначаємо FK на батьківський тип Product
+            builder.HasOne<Product>()
+                .WithMany()
+                .HasForeignKey(x => x.Id)
+                .HasConstraintName("FK_knives_products_id")
+                .OnDelete(DeleteBehavior.Cascade);
+
             builder.Property(x => x.KnifeType)
                 .HasColumnName("knife_type")
                 .HasConversion<string>()

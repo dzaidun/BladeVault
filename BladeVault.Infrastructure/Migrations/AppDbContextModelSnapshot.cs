@@ -1009,19 +1009,21 @@ namespace BladeVault.Infrastructure.Migrations
             modelBuilder.Entity("BladeVault.Domain.Entities.Products.Knife", b =>
                 {
                     b.HasOne("BladeVault.Domain.Entities.Products.Product", null)
-                        .WithOne()
-                        .HasForeignKey("BladeVault.Domain.Entities.Products.Knife", "Id")
+                        .WithMany()
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_knives_products_id");
                 });
 
             modelBuilder.Entity("BladeVault.Domain.Entities.Products.MultiTool", b =>
                 {
                     b.HasOne("BladeVault.Domain.Entities.Products.Product", null)
-                        .WithOne()
-                        .HasForeignKey("BladeVault.Domain.Entities.Products.MultiTool", "Id")
+                        .WithMany()
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_multi_tools_products_id");
                 });
 
             modelBuilder.Entity("BladeVault.Domain.Entities.Category", b =>
